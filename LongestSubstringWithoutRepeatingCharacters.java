@@ -1,80 +1,37 @@
-/*
-* https://leetcode.com/problems/longest-substring-without-repeating-characters/
-* Difficulty: MEDIUM
-* */
-
-import java.util.ArrayList;
-import java.util.List;
-
-public class Main {
-
-    public static void main(String[] args) {
-
-        run("abcabcbb");
-        run("bbbbb");
-        run("pwwkew");
-    }
-
-    public static void run(String _s) {
-
-        if (!containsDuplicateChar(_s)) {
-            System.out.println(_s + ", " + _s.length());
-            return;
-        }
-
-        String[] s = _s.split("");
-        String longestUniqueWord = "";
-
-        int i;
-        for (i = s.length - 1; i > 0; i--) {
-
-            int j;
-            for (j = 0; j < s.length; j++) {
-
-                int rightIndex = j + i;
-                if (rightIndex < s.length) {
-
-                    String currentSubstring = getString(s, j, rightIndex);
-                    if (currentSubstring.length() > longestUniqueWord.length() && !containsDuplicateChar(currentSubstring)) {
-                        longestUniqueWord = currentSubstring;
+class Solution {
+    public int lengthOfLongestSubstring(String s) {
+        int max = 0;
+        for (int diff = 0; diff < s.length(); diff++) {
+            for (int l = 0; l < s.length() - diff; l++) {
+                int r = l + diff;
+                String sub = getSub(s, l, r);
+                if (sub.length() > max) {
+                    if (isUnique(sub)) {
+                        max = sub.length();
                     }
                 }
             }
         }
-
-        if (longestUniqueWord.length() < 1) {
-            longestUniqueWord = s[0];
-        }
-
-        System.out.println(longestUniqueWord + ", " + longestUniqueWord.length());
+        return max;
     }
-
-    public static boolean containsDuplicateChar(String _s) {
-
-        String[] s = _s.split("");
-
-        int i;
-        List<String> chars = new ArrayList<>();
-        for (i = 0; i < s.length; i++) {
-
-            if (chars.contains(s[i])) {
-                return true;
+    
+    public String getSub(String s, int l, int r) {
+        String result = "";
+        for (int i = l; i <= r; i++) {
+            result += s.charAt(i);
+        }
+        return result; 
+    }
+    
+    public boolean isUnique(String s) {
+        List<String> found = new ArrayList<>();
+        for (int i = 0; i < s.length(); i++) {
+            String c = String.valueOf(s.charAt(i));
+            if (found.contains(c)) {
+                return false;
             }
-
-            chars.add(s[i]);
+            found.add(c);
         }
-        return false;
-    }
-
-    public static String getString(String[] s, int leftIndex, int rightIndex) {
-
-        String x = "";
-
-        int i;
-        for (i = leftIndex; i <=rightIndex; i++) {
-            x = x + s[i];
-        }
-
-        return x;
+        return true;
     }
 }
